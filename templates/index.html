@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Food Classification · Vihara Tech</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0f4ff;
+  --bg2:#e8eeff;
+  --card:#ffffff;
+  --card2:#f7f9ff;
+  --border:#dde4f5;
+  --border2:#c8d3f0;
+  --teal:#0099cc;
+  --teal2:#007aaa;
+  --tealLight:#e0f5ff;
+  --cyan:#00b4d8;
+  --amber:#f59e0b;
+  --amberLight:#fff8e7;
+  --green:#16a34a;
+  --greenLight:#e8faf0;
+  --rose:#e11d48;
+  --roseLight:#fff0f3;
+  --purple:#7c3aed;
+  --purpleLight:#f0ebff;
+  --blue:#1d4ed8;
+  --blueLight:#eff6ff;
+  --text:#1e2a3a;
+  --text2:#4a5a7a;
+  --muted:#8a9abf;
+  --r:14px;--r2:9px
+}
+body{background:var(--bg);color:var(--text);font-family:'Nunito Sans',system-ui,sans-serif;min-height:100vh;overflow-x:hidden;
+  background-image:
+    radial-gradient(ellipse 80% 40% at 50% -5%,rgba(0,153,204,0.1) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 30% at 90% 90%,rgba(124,58,237,0.07) 0%,transparent 50%),
+    radial-gradient(ellipse 30% 25% at 5% 70%,rgba(0,180,216,0.06) 0%,transparent 50%)}
+
+header{
+  background:linear-gradient(135deg,#ffffff 0%,#f5f8ff 50%,#ffffff 100%);
+  border-bottom:2px solid var(--border);
+  padding:1.6rem 2rem 1.4rem;
+  display:flex;align-items:center;justify-content:space-between;
+  position:relative;overflow:hidden;
+  box-shadow:0 2px 20px rgba(0,100,200,0.08)
+}
+header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--teal),var(--cyan),var(--purple),var(--amber),var(--teal))}
+.bracket{position:absolute;width:20px;height:20px;border-color:rgba(0,153,204,0.4);border-style:solid}
+.bracket.tl{top:12px;left:16px;border-width:2px 0 0 2px}
+.bracket.tr{top:12px;right:16px;border-width:2px 2px 0 0}
+.bracket.bl{bottom:14px;left:16px;border-width:0 0 2px 2px}
+.bracket.br{bottom:14px;right:16px;border-width:0 2px 2px 0}
+.hdr-left{display:flex;align-items:center;gap:1rem;position:relative;z-index:1}
+.hdr-logo{width:52px;height:52px;border-radius:14px;
+  background:linear-gradient(135deg,var(--teal),var(--cyan),var(--purple));
+  display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;
+  box-shadow:0 4px 16px rgba(0,153,204,0.3)}
+.hdr-title{font-family:'Orbitron',monospace;font-weight:900;font-size:1.4rem;letter-spacing:3px;color:var(--text)}
+.hdr-title span{color:var(--teal)}
+.hdr-sub{font-size:0.68rem;letter-spacing:3px;color:var(--text2);text-transform:uppercase;margin-top:4px}
+.hdr-right{display:flex;gap:0.6rem;align-items:center;position:relative;z-index:1}
+.hdr-badge{font-size:0.65rem;letter-spacing:1.5px;padding:0.35rem 0.85rem;border-radius:20px;text-transform:uppercase;font-weight:700;display:flex;align-items:center;gap:5px}
+.badge-teal{background:var(--tealLight);color:var(--teal2);border:1.5px solid rgba(0,153,204,0.3)}
+.badge-purple{background:var(--purpleLight);color:var(--purple);border:1.5px solid rgba(124,58,237,0.3)}
+
+.layout{display:grid;grid-template-columns:225px 1fr 265px;gap:1rem;max-width:1440px;margin:1rem auto;padding:0 1rem 3rem}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1.3rem;
+  box-shadow:0 2px 12px rgba(0,80,160,0.06),0 1px 3px rgba(0,0,0,0.04)}
+.card:hover{box-shadow:0 4px 20px rgba(0,80,160,0.1),0 1px 3px rgba(0,0,0,0.05)}
+
+.sec-title{font-size:0.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--teal2);
+  margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;font-family:monospace;font-weight:600}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);
+  box-shadow:0 0 0 3px rgba(0,153,204,0.2);animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(0,153,204,0.2)}50%{box-shadow:0 0 0 5px rgba(0,153,204,0.08)}}
+
+/* LEFT */
+.left-col{display:flex;flex-direction:column;gap:1rem}
+.profile-ring{width:120px;height:120px;border-radius:50%;margin:0 auto 1rem;
+  background:conic-gradient(var(--teal),var(--cyan),var(--purple),var(--amber),var(--teal));
+  padding:3px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 24px rgba(0,153,204,0.25)}
+.profile-inner{width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,#e8f0ff,#f5f8ff);
+  display:flex;align-items:center;justify-content:center;font-size:2.2rem}
+.dev-name{font-family:'Orbitron',monospace;font-size:1rem;font-weight:700;text-align:center;
+  letter-spacing:2px;line-height:1.35;color:var(--text)}
+.dev-role{font-size:0.65rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal);
+  text-align:center;margin-top:0.4rem;font-weight:700}
+.sep{border:none;border-top:1px solid var(--border);margin:1rem 0}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:0.42rem 0;
+  border-bottom:1px solid var(--border)}
+.stat-row:last-child{border-bottom:none}
+.stat-k{font-size:0.72rem;color:var(--text2);display:flex;align-items:center;gap:0.45rem;font-weight:600}
+.stat-k i{font-size:14px;color:var(--teal)}
+.stat-v{font-family:monospace;font-size:0.72rem;color:var(--teal2);font-weight:700;
+  background:var(--tealLight);padding:0.15rem 0.55rem;border-radius:5px;border:1px solid rgba(0,153,204,0.2)}
+
+/* CENTER */
+.center-col{display:flex;flex-direction:column;gap:1rem}
+.upload-zone{border:2px dashed var(--border2);border-radius:var(--r);padding:2.5rem 1.5rem;
+  text-align:center;cursor:pointer;transition:all 0.25s;position:relative;min-height:175px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,rgba(0,153,204,0.03),transparent)}
+.upload-zone:hover,.upload-zone.drag-over{border-color:var(--teal);background:var(--tealLight);
+  box-shadow:0 0 0 4px rgba(0,153,204,0.08)}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;z-index:2}
+.upload-icon-wrap{width:68px;height:68px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(0,153,204,0.12),rgba(0,180,216,0.06));
+  border:2px solid rgba(0,153,204,0.25);
+  display:flex;align-items:center;justify-content:center;margin-bottom:0.8rem;
+  transition:all 0.25s;font-size:1.9rem;
+  box-shadow:0 4px 12px rgba(0,153,204,0.1)}
+.upload-zone:hover .upload-icon-wrap{box-shadow:0 6px 20px rgba(0,153,204,0.25);border-color:var(--teal);transform:scale(1.05)}
+.upload-hint{font-size:0.83rem;color:var(--text2);line-height:1.6;font-weight:500}
+.upload-hint strong{color:var(--teal);font-weight:700}
+.upload-formats{display:flex;gap:0.5rem;margin-top:0.7rem;justify-content:center}
+.fmt-pill{font-size:0.6rem;padding:0.22rem 0.65rem;border-radius:10px;
+  border:1.5px solid var(--border2);color:var(--muted);letter-spacing:1.5px;font-weight:700;background:var(--bg2)}
+
+#preview-wrap{display:none;margin-top:1rem;text-align:center}
+#preview-img{max-height:210px;max-width:100%;border-radius:10px;border:2px solid var(--border);
+  box-shadow:0 8px 32px rgba(0,80,160,0.12)}
+#file-name{font-family:monospace;font-size:0.7rem;color:var(--muted);margin-top:0.5rem}
+
+.model-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.8rem}
+.model-btn{background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r2);
+  padding:1.15rem 0.5rem 0.95rem;cursor:pointer;transition:all 0.2s;text-align:center;
+  color:var(--text2);font-family:monospace;font-size:0.73rem;letter-spacing:1px;position:relative;overflow:hidden}
+.model-btn .model-icon-wrap{width:48px;height:48px;border-radius:50%;margin:0 auto 0.65rem;
+  display:flex;align-items:center;justify-content:center;font-size:1.4rem;
+  border:1.5px solid var(--border2);transition:all 0.2s;background:#fff}
+.model-btn:hover{border-color:var(--teal);color:var(--teal2);transform:translateY(-3px);
+  box-shadow:0 8px 20px rgba(0,153,204,0.15);background:#fff}
+.model-btn:hover .model-icon-wrap{background:var(--tealLight);border-color:rgba(0,153,204,0.3);transform:scale(1.05)}
+.model-btn.active{border-color:var(--teal);color:var(--teal2);background:#fff;
+  box-shadow:0 4px 16px rgba(0,153,204,0.18),0 0 0 3px rgba(0,153,204,0.08)}
+.model-btn.active .model-icon-wrap{background:var(--tealLight);border-color:rgba(0,153,204,0.4)}
+.model-arch{font-size:0.58rem;color:var(--muted);margin-top:0.3rem;letter-spacing:.5px}
+.model-name{font-size:0.75rem;font-weight:700;color:var(--text)}
+.active-indicator{position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--teal),var(--cyan));transform:scaleX(0);transition:transform 0.2s;border-radius:0 0 2px 2px}
+.model-btn.active .active-indicator{transform:scaleX(1)}
+
+#predict-btn{width:100%;padding:1.15rem;font-family:'Orbitron',monospace;font-weight:700;font-size:0.9rem;
+  letter-spacing:5px;text-transform:uppercase;
+  background:linear-gradient(135deg,#007aaa,var(--teal) 50%,#00b4d8);
+  color:#ffffff;border:none;border-radius:var(--r);cursor:pointer;transition:all 0.25s;
+  position:relative;overflow:hidden;
+  box-shadow:0 4px 20px rgba(0,153,204,0.35),0 2px 6px rgba(0,0,0,0.1)}
+#predict-btn::before{content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.25) 50%,transparent 100%);
+  transform:translateX(-100%)}
+#predict-btn:hover:not(:disabled){transform:translateY(-3px);
+  box-shadow:0 8px 32px rgba(0,153,204,0.45),0 4px 12px rgba(0,0,0,0.12)}
+#predict-btn:hover:not(:disabled)::before{animation:shimmer 0.6s ease}
+@keyframes shimmer{to{transform:translateX(100%)}}
+#predict-btn:active:not(:disabled){transform:translateY(0)}
+#predict-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn-inner{display:flex;align-items:center;justify-content:center;gap:0.6rem}
+.btn-spinner{display:none;width:20px;height:20px;border:2px solid rgba(255,255,255,0.3);
+  border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite}
+.btn-spinner.show{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.error-msg{background:var(--roseLight);border:1.5px solid rgba(225,29,72,0.25);border-radius:var(--r2);
+  padding:0.85rem 1rem;color:var(--rose);font-size:0.78rem;margin-top:0.8rem;
+  display:none;font-family:monospace;align-items:center;gap:0.6rem;font-weight:600}
+
+#result-panel{display:none}
+.result-food-name{font-family:'Orbitron',monospace;font-weight:900;font-size:1.75rem;
+  letter-spacing:2px;color:var(--teal2);line-height:1.2}
+.result-model-badge{display:inline-flex;align-items:center;gap:0.45rem;font-family:monospace;
+  font-size:0.62rem;letter-spacing:2px;padding:0.28rem 0.8rem;border-radius:20px;
+  background:var(--purpleLight);border:1.5px solid rgba(124,58,237,0.25);color:var(--purple);
+  margin-top:0.55rem;font-weight:700}
+
+.conf-wrap{margin-top:1.2rem}
+.conf-labels{display:flex;justify-content:space-between;font-size:0.73rem;color:var(--text2);
+  margin-bottom:0.4rem;font-family:monospace;font-weight:600}
+#conf-pct{color:var(--teal2);font-weight:800}
+.conf-track{height:8px;background:var(--bg2);border-radius:50px;overflow:hidden;
+  border:1px solid var(--border);box-shadow:inset 0 2px 4px rgba(0,0,0,0.05)}
+.conf-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--cyan));
+  border-radius:50px;transition:width 0.9s cubic-bezier(0.16,1,0.3,1);width:0%;
+  box-shadow:0 2px 6px rgba(0,153,204,0.3)}
+
+.metrics-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.65rem;margin-top:0.5rem}
+.metric-cell{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);
+  padding:0.95rem 0.8rem;text-align:center;position:relative;overflow:hidden;transition:all 0.2s}
+.metric-cell:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,80,160,0.08);border-color:var(--border2)}
+.metric-cell::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.metric-cell:nth-child(1)::before{background:linear-gradient(90deg,var(--teal),var(--cyan))}
+.metric-cell:nth-child(2)::before{background:linear-gradient(90deg,var(--purple),#a78bfa)}
+.metric-cell:nth-child(3)::before{background:linear-gradient(90deg,var(--amber),#fcd34d)}
+.metric-cell:nth-child(4)::before{background:linear-gradient(90deg,var(--green),#4ade80)}
+.metric-icon{font-size:18px;color:var(--muted);margin-bottom:0.35rem}
+.metric-val{font-family:'Orbitron',monospace;font-weight:700;font-size:1.3rem;letter-spacing:1px;color:var(--text)}
+.metric-val.high{color:var(--green)}.metric-val.med{color:var(--amber)}.metric-val.low{color:var(--rose)}
+.metric-label{font-family:monospace;font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:0.25rem;font-weight:600}
+
+.top5-row{display:flex;align-items:center;gap:0.7rem;padding:0.52rem 0;border-bottom:1px solid var(--border)}
+.top5-row:last-child{border-bottom:none}
+.t5-rank{font-family:monospace;font-size:0.68rem;color:var(--muted);width:18px;text-align:right;font-weight:700}
+.t5-rank.gold{color:var(--amber);font-weight:800}
+.t5-name{flex:1;font-size:0.82rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.t5-bar-wrap{flex:0 0 72px}
+.t5-bar{height:5px;background:var(--bg2);border-radius:50px;overflow:hidden;border:1px solid var(--border)}
+.t5-bar-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--cyan));border-radius:50px}
+.t5-pct{font-family:monospace;font-size:0.72rem;color:var(--teal2);width:42px;text-align:right;font-weight:700}
+
+/* RIGHT */
+.right-col{display:flex;flex-direction:column;gap:1rem}
+#nut-panel{display:none}
+.nut-header-food{font-family:'Orbitron',monospace;font-size:0.73rem;font-weight:700;
+  color:var(--teal2);letter-spacing:1.5px;margin-bottom:0.8rem;text-transform:uppercase}
+.nut-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem}
+.nut-tile{background:#fff;border:1.5px solid var(--border);border-radius:var(--r2);
+  padding:0.9rem 0.6rem;text-align:center;transition:all 0.2s;position:relative;overflow:hidden}
+.nut-tile::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r2) var(--r2) 0 0}
+.nut-tile.full::before{background:linear-gradient(90deg,var(--amber),#fcd34d)}
+.nut-tile:nth-child(2)::before{background:linear-gradient(90deg,var(--green),#4ade80)}
+.nut-tile:nth-child(3)::before{background:linear-gradient(90deg,var(--cyan),#67e8f9)}
+.nut-tile:nth-child(4)::before{background:linear-gradient(90deg,var(--rose),#fb7185)}
+.nut-tile:nth-child(5)::before{background:linear-gradient(90deg,var(--teal),var(--cyan))}
+.nut-tile.full{grid-column:span 2;background:var(--amberLight)}
+.nut-tile:nth-child(2){background:var(--greenLight)}
+.nut-tile:nth-child(3){background:#e0f9ff}
+.nut-tile:nth-child(4){background:var(--roseLight)}
+.nut-tile:nth-child(5){background:var(--tealLight)}
+.nut-tile:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,80,160,0.1)}
+.nut-icon{font-size:1.3rem;margin-bottom:0.3rem}
+.nut-num{font-family:'Orbitron',monospace;font-weight:700;font-size:1.35rem;letter-spacing:1px}
+.nut-num.cal{color:#d97706}.nut-num.pro{color:#15803d}
+.nut-num.carb{color:#0e7490}.nut-num.fat{color:#be123c}.nut-num.fib{color:var(--teal2)}
+.nut-name{font-size:0.6rem;font-family:monospace;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:0.2rem;font-weight:600}
+.nut-unit{font-size:0.57rem;color:var(--muted);font-family:monospace}
+.nut-placeholder{text-align:center;padding:1.5rem 0.5rem}
+.nut-placeholder .ph-icon{font-size:2rem;margin-bottom:0.5rem;opacity:.4}
+.nut-placeholder p{font-size:0.75rem;color:var(--muted);line-height:1.6}
+
+.classes-card{max-height:430px;display:flex;flex-direction:column}
+.class-search{background:#fff;border:1.5px solid var(--border);border-radius:var(--r2);
+  padding:0.52rem 0.85rem;font-size:0.8rem;color:var(--text);width:100%;margin-bottom:0.8rem;
+  outline:none;transition:all 0.2s;font-family:'Nunito Sans',sans-serif;font-weight:600}
+.class-search:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,153,204,0.1)}
+.class-scroll{overflow-y:auto;max-height:340px;padding-right:4px;
+  scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.class-scroll::-webkit-scrollbar{width:5px}
+.class-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.class-item{font-size:0.73rem;color:var(--text2);padding:0.36rem 0.6rem;border-radius:6px;
+  border-left:2px solid transparent;cursor:default;transition:all 0.15s;
+  display:flex;align-items:center;gap:0.5rem;font-weight:500}
+.class-item:hover{background:var(--tealLight);color:var(--teal2);border-left-color:rgba(0,153,204,0.4)}
+.class-item.highlighted{background:linear-gradient(90deg,var(--tealLight),rgba(224,245,255,0.3));
+  color:var(--teal2);border-left-color:var(--teal);font-weight:700;
+  box-shadow:inset 3px 0 0 var(--teal)}
+
+.fade-in{animation:fadeSlide 0.4s ease forwards}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:1100px){.layout{grid-template-columns:200px 1fr 245px}}
+@media(max-width:830px){.layout{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bracket tl"></div><div class="bracket tr"></div>
+  <div class="bracket bl"></div><div class="bracket br"></div>
+  <div class="hdr-left">
+    <div class="hdr-logo">🍽️</div>
+    <div>
+      <div class="hdr-title">FOOD <span>CLASSIFICATION</span> · CNN</div>
+      <div class="hdr-sub">Vihara Tech &nbsp;·&nbsp; The Skill Union &nbsp;·&nbsp; Deep Learning</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <span class="hdr-badge badge-teal"><i class="ti ti-brain"></i> Deep Learning</span>
+    <span class="hdr-badge badge-purple"><i class="ti ti-eye"></i> Computer Vision</span>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- LEFT -->
+  <aside class="left-col">
+    <div class="card">
+      <div class="profile-ring">
+        <img src="/static/images/Mounika.png" alt="Mounika Kusumba"
+  style="width:100%;height:100%;border-radius:50%;object-fit:cover;object-position:center top;display:block;"/>
+      </div>
+      <div class="dev-name">Mounika<br>Kusumba</div>
+      <div class="dev-role">Data Scientist</div>
+      <hr class="sep"/>
+      <div class="sec-title"><span class="live-dot"></span>Project Stats</div>
+      <div>
+        <div class="stat-row"><span class="stat-k"><i class="ti ti-category"></i>Food Classes</span><span class="stat-v">34</span></div>
+        <div class="stat-row"><span class="stat-k"><i class="ti ti-cpu"></i>Models</span><span class="stat-v">3</span></div>
+        <div class="stat-row"><span class="stat-k"><i class="ti ti-resize"></i>CNN Input</span><span class="stat-v">256×256</span></div>
+        <div class="stat-row"><span class="stat-k"><i class="ti ti-layers-difference"></i>VGG / ResNet</span><span class="stat-v">224×224</span></div>
+        <div class="stat-row"><span class="stat-k"><i class="ti ti-server"></i>Backend</span><span class="stat-v">Flask</span></div>
+        <div class="stat-row"><span class="stat-k"><i class="ti ti-database"></i>Data Store</span><span class="stat-v">Redis</span></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CENTER -->
+  <main class="center-col">
+
+    <div class="card">
+      <div class="sec-title"><span class="live-dot"></span>Upload Food Image</div>
+      <div class="upload-zone" id="upload-zone">
+        <input type="file" id="file-input" accept="image/*"/>
+        <div class="upload-icon-wrap">🍱</div>
+        <div class="upload-hint">Drag &amp; drop or <strong>browse</strong> to upload a food image</div>
+        <div class="upload-formats">
+          <span class="fmt-pill">JPG</span>
+          <span class="fmt-pill">PNG</span>
+          <span class="fmt-pill">WEBP</span>
+        </div>
+      </div>
+      <div id="preview-wrap">
+        <img id="preview-img" src="" alt="Preview"/>
+        <div id="file-name"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sec-title"><span class="live-dot"></span>Select Model Architecture</div>
+      <div class="model-grid">
+        <button class="model-btn active" data-model="custom_cnn">
+          <div class="model-icon-wrap">🧠</div>
+          <div class="model-name">Custom CNN</div>
+          <div class="model-arch">5 Conv Blocks</div>
+          <div class="active-indicator"></div>
+        </button>
+        <button class="model-btn" data-model="vgg16">
+          <div class="model-icon-wrap">🏗️</div>
+          <div class="model-name">VGG-16</div>
+          <div class="model-arch">16 Layers</div>
+          <div class="active-indicator"></div>
+        </button>
+        <button class="model-btn" data-model="resnet50">
+          <div class="model-icon-wrap">🔗</div>
+          <div class="model-name">ResNet-50</div>
+          <div class="model-arch">Skip Connections</div>
+          <div class="active-indicator"></div>
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <button id="predict-btn">
+        <div class="btn-inner">
+          <i class="ti ti-bolt" id="btn-icon" style="font-size:22px"></i>
+          <span id="btn-text">PREDICT FOOD</span>
+        </div>
+        <div class="btn-spinner" id="btn-spinner"></div>
+      </button>
+      <div class="error-msg" id="error-msg">
+        <i class="ti ti-alert-circle" style="font-size:16px;flex-shrink:0"></i>
+        <span id="error-text"></span>
+      </div>
+    </div>
+
+    <div class="card fade-in" id="result-panel">
+      <div class="sec-title"><span class="live-dot"></span>Prediction Result</div>
+      <div class="result-food-name" id="result-label">—</div>
+      <div class="result-model-badge" id="result-model-tag">
+        <i class="ti ti-cpu" style="font-size:12px"></i><span></span>
+      </div>
+      <div class="conf-wrap">
+        <div class="conf-labels"><span>Confidence Score</span><span id="conf-pct">0%</span></div>
+        <div class="conf-track"><div class="conf-fill" id="conf-bar"></div></div>
+      </div>
+      <hr class="sep" style="margin-top:1.2rem"/>
+      <div class="sec-title" style="margin-bottom:0.6rem"><span class="live-dot"></span>Inference Metrics</div>
+      <div class="metrics-grid">
+        <div class="metric-cell"><div class="metric-icon"><i class="ti ti-target-arrow"></i></div><div class="metric-val" id="m-conf">—</div><div class="metric-label">Accuracy</div></div>
+        <div class="metric-cell"><div class="metric-icon"><i class="ti ti-crosshair"></i></div><div class="metric-val" id="m-prec">—</div><div class="metric-label">Precision</div></div>
+        <div class="metric-cell"><div class="metric-icon"><i class="ti ti-refresh"></i></div><div class="metric-val" id="m-rec">—</div><div class="metric-label">Recall</div></div>
+        <div class="metric-cell"><div class="metric-icon"><i class="ti ti-chart-line"></i></div><div class="metric-val" id="m-f1">—</div><div class="metric-label">F1-Score</div></div>
+      </div>
+      <hr class="sep" style="margin-top:1.2rem"/>
+      <div class="sec-title" style="margin-bottom:0.4rem"><span class="live-dot"></span>Top 5 Predictions</div>
+      <div id="top5-list"></div>
+    </div>
+
+  </main>
+
+  <!-- RIGHT -->
+  <aside class="right-col">
+
+    <div class="card" id="nut-panel">
+      <div class="sec-title"><span class="live-dot"></span>Nutrition <span style="color:var(--muted);font-size:0.55rem;letter-spacing:1px">per 100g · Redis</span></div>
+      <div class="nut-header-food" id="nut-food-name"></div>
+      <div id="nut-content"></div>
+    </div>
+
+    <div class="card classes-card">
+      <div class="sec-title"><span class="live-dot"></span>34 Food Classes</div>
+      <input type="text" class="class-search" id="class-search" placeholder="🔍  Filter classes..."/>
+      <div class="class-scroll">
+        <div id="class-list"></div>
+      </div>
+    </div>
+
+  </aside>
+
+</div>
+
+<script>
+const LABELS=['butter_naan','pav_bhaji','Sandwich','chicken_curry','Hot Dog','cheesecake','sushi','chai','burger','ice_cream','kadai_paneer','Baked Potato','chapati','masala_dosa','dal_makhani','Donut','jalebi','fried_rice','chole_bhature','kulfi','kaathi_rolls','dhokla','Fries','omelette','pakode','momos','paani_puri','samosa','Taco','idli','Taquito','Crispy Chicken','pizza','apple_pie'];
+const FOOD_ICONS={'butter_naan':'🫓','pav_bhaji':'🍲','Sandwich':'🥪','chicken_curry':'🍛','Hot Dog':'🌭','cheesecake':'🍰','sushi':'🍣','chai':'☕','burger':'🍔','ice_cream':'🍦','kadai_paneer':'🥘','Baked Potato':'🥔','chapati':'🫓','masala_dosa':'🥞','dal_makhani':'🫕','Donut':'🍩','jalebi':'🟠','fried_rice':'🍚','chole_bhature':'🥙','kulfi':'🧊','kaathi_rolls':'🌯','dhokla':'🟡','Fries':'🍟','omelette':'🍳','pakode':'🟤','momos':'🥟','paani_puri':'🫧','samosa':'🔺','Taco':'🌮','idli':'⚪','Taquito':'🌯','Crispy Chicken':'🍗','pizza':'🍕','apple_pie':'🥧'};
+
+let selectedModel='custom_cnn',selectedFile=null;
+
+const classList=document.getElementById('class-list');
+LABELS.forEach(label=>{
+  const el=document.createElement('div');
+  el.className='class-item';
+  el.innerHTML=`<span style="font-size:14px">${FOOD_ICONS[label]||'🍽️'}</span><span>${label.replace(/_/g,' ')}</span>`;
+  el.dataset.label=label;
+  classList.appendChild(el);
+});
+
+document.getElementById('class-search').addEventListener('input',function(){
+  const q=this.value.toLowerCase();
+  classList.querySelectorAll('.class-item').forEach(el=>{
+    el.style.display=el.dataset.label.toLowerCase().includes(q)?'flex':'none';
+  });
+});
+
+document.querySelectorAll('.model-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.model-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');selectedModel=btn.dataset.model;
+  });
+});
+
+const fileInput=document.getElementById('file-input');
+const uploadZone=document.getElementById('upload-zone');
+fileInput.addEventListener('change',e=>handleFile(e.target.files[0]));
+uploadZone.addEventListener('dragover',e=>{e.preventDefault();uploadZone.classList.add('drag-over')});
+uploadZone.addEventListener('dragleave',()=>uploadZone.classList.remove('drag-over'));
+uploadZone.addEventListener('drop',e=>{e.preventDefault();uploadZone.classList.remove('drag-over');if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0])});
+
+function handleFile(file){
+  if(!file)return;selectedFile=file;
+  document.getElementById('preview-img').src=URL.createObjectURL(file);
+  document.getElementById('file-name').textContent=file.name;
+  document.getElementById('preview-wrap').style.display='block';
+  document.getElementById('result-panel').style.display='none';
+  document.getElementById('nut-panel').style.display='none';
+  hideError();
+}
+
+document.getElementById('predict-btn').addEventListener('click',async()=>{
+  if(!selectedFile){showError('Please upload a food image first.');return;}
+  hideError();setLoading(true);
+  const fd=new FormData();fd.append('image',selectedFile);fd.append('model',selectedModel);
+  try{
+    const res=await fetch('/predict',{method:'POST',body:fd});
+    const data=await res.json();
+    if(!res.ok)throw new Error(data.error||'Prediction failed');
+    renderResult(data);
+  }catch(err){showError(err.message);}finally{setLoading(false);}
+});
+
+function renderResult(data){
+  const rp=document.getElementById('result-panel');
+  rp.style.display='block';rp.classList.remove('fade-in');void rp.offsetWidth;rp.classList.add('fade-in');
+  const label=data.predicted_label;
+  document.getElementById('result-label').textContent=(FOOD_ICONS[label]||'🍽️')+' '+label.replace(/_/g,' ').toUpperCase();
+  document.getElementById('result-model-tag').querySelector('span').textContent=(data.model_used||selectedModel).toUpperCase().replace(/_/g,' ');
+  const pct=Math.min(100,data.confidence||0).toFixed(1);
+  document.getElementById('conf-pct').textContent=pct+'%';
+  setTimeout(()=>{document.getElementById('conf-bar').style.width=pct+'%';},60);
+  const m=data.metrics||{};
+  setMetricCell('m-conf',m.confidence,'%');setMetricCell('m-prec',m.precision,'%');
+  setMetricCell('m-rec',m.recall,'%');setMetricCell('m-f1',m.f1_score,'%');
+  document.querySelectorAll('.class-item').forEach(el=>{
+    el.classList.toggle('highlighted',el.dataset.label===data.predicted_label);
+  });
+  const hl=classList.querySelector('.highlighted');
+  if(hl)hl.scrollIntoView({behavior:'smooth',block:'nearest'});
+  renderNutrition(data.predicted_label,data.nutrition);
+  document.getElementById('top5-list').innerHTML=(data.top5||[]).map((item,i)=>`
+    <div class="top5-row">
+      <span class="t5-rank${i===0?' gold':''}">#${i+1}</span>
+      <span class="t5-name">${FOOD_ICONS[item.label]||'🍽️'} ${item.label.replace(/_/g,' ')}</span>
+      <div class="t5-bar-wrap"><div class="t5-bar"><div class="t5-bar-fill" style="width:${Math.min(100,item.confidence).toFixed(1)}%"></div></div></div>
+      <span class="t5-pct">${Math.min(100,item.confidence).toFixed(1)}%</span>
+    </div>`).join('');
+  rp.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function setMetricCell(id,val,unit){
+  const el=document.getElementById(id);
+  if(val===undefined||val===null){el.textContent='—';return;}
+  const v=parseFloat(val);el.textContent=v.toFixed(1)+unit;
+  el.className='metric-val';
+  if(v>=70)el.classList.add('high');else if(v>=40)el.classList.add('med');else el.classList.add('low');
+}
+
+function renderNutrition(label,nut){
+  const panel=document.getElementById('nut-panel');
+  document.getElementById('nut-food-name').textContent=label.replace(/_/g,' ');
+  const c=document.getElementById('nut-content');
+  if(nut&&Object.keys(nut).length>0){
+    const tiles=[
+      {key:'calories',label:'Calories',cls:'cal',unit:'kcal',full:true,icon:'🔥'},
+      {key:'protein',label:'Protein',cls:'pro',unit:'g',icon:'💪'},
+      {key:'carbs',label:'Carbs',cls:'carb',unit:'g',icon:'🌾'},
+      {key:'fats',label:'Fats',cls:'fat',unit:'g',icon:'🫧'},
+      {key:'fiber',label:'Fiber',cls:'fib',unit:'g',icon:'🌿'},
+    ];
+    let html='<div class="nut-grid">';
+    tiles.forEach(t=>{
+      const val=nut[t.key];if(val===undefined||val===null)return;
+      html+=`<div class="nut-tile${t.full?' full':''}"><div class="nut-icon">${t.icon}</div><div class="nut-num ${t.cls}">${val}</div><div class="nut-name">${t.label}</div><div class="nut-unit">${t.unit}</div></div>`;
+    });
+    html+='</div>';c.innerHTML=html;
+  }else{
+    c.innerHTML=`<div class="nut-placeholder"><div class="ph-icon">📭</div><p>No nutrition data in Redis for<br><strong style="color:var(--text)">${label.replace(/_/g,' ')}</strong></p></div>`;
+  }
+  panel.style.display='block';panel.classList.remove('fade-in');void panel.offsetWidth;panel.classList.add('fade-in');
+}
+
+function setLoading(on){
+  const btn=document.getElementById('predict-btn');
+  document.getElementById('btn-text').style.display=on?'none':'inline';
+  document.getElementById('btn-icon').style.display=on?'none':'inline-block';
+  document.getElementById('btn-spinner').classList.toggle('show',on);
+  btn.disabled=on;
+}
+function showError(msg){document.getElementById('error-text').textContent=msg;document.getElementById('error-msg').style.display='flex';}
+function hideError(){document.getElementById('error-msg').style.display='none';}
+</script>
+</body>
+</html>
